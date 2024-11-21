@@ -1,44 +1,57 @@
 import java.time.LocalDate;
-import java.time.Period;
 
 public class Pacjent {
     private String imie;
     private String nazwisko;
     private String pesel;
     private LocalDate dataUrodzenia;
-    private int wiek;
     private String telefon;
     private String email;
 
+    // Konstruktor
     public Pacjent(String imie, String nazwisko, String pesel, LocalDate dataUrodzenia, String telefon, String email) {
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.pesel = pesel;
         this.dataUrodzenia = dataUrodzenia;
-        this.wiek = obliczWiek(dataUrodzenia);
         this.telefon = telefon;
         this.email = email;
     }
 
-    private int obliczWiek(LocalDate dataUrodzenia) {
-        return Period.between(dataUrodzenia, LocalDate.now()).getYears();
+    // Gettery
+    public String getImie() {
+        return imie;
     }
 
-    // Getter dla PESEL
+    public String getNazwisko() {
+        return nazwisko;
+    }
+
     public String getPesel() {
         return pesel;
+    }
+
+    public LocalDate getDataUrodzenia() {
+        return dataUrodzenia;
+    }
+
+    public String getTelefon() {
+        return telefon;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override
     public String toString() {
         return "Pacjent{" +
-                "Imię='" + imie + '\'' +
-                ", Nazwisko='" + nazwisko + '\'' +
-                ", PESEL='" + pesel + '\'' +
-                ", Data urodzenia=" + dataUrodzenia +
-                ", Wiek=" + wiek +
-                ", Telefon='" + telefon + '\'' +
-                ", Email='" + email + '\'' +
+                "imie='" + imie + '\'' +
+                ", nazwisko='" + nazwisko + '\'' +
+                ", pesel='" + pesel + '\'' +
+                ", dataUrodzenia=" + dataUrodzenia +
+                ", telefon='" + telefon + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

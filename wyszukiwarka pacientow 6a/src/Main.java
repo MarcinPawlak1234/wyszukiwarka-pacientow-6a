@@ -1,91 +1,94 @@
 import java.time.LocalDate;
 import java.util.Scanner;
 
+/**
+ * Główna klasa aplikacji, która umożliwia użytkownikowi wybór typu konta (HR lub recepcjonista)
+ * i wykonywanie podstawowych operacji związanych z pacjentami.
+ */
 public class Main {
-    private static final PacjentRepository pacjentRepository = new PacjentRepository();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Wybór konta użytkownika
-        UserType userType = wybierzTypUzytkownika(scanner);
-        System.out.println("Zalogowano jako: " + userType);
-
-        boolean running = true;
-
-        // Główna pętla aplikacji
-        while (running) {
-            System.out.println("\nMenu:");
-            System.out.println("1. Dodaj nowego pacjenta");
-            System.out.println("2. Wyświetl wszystkich pacjentów (DEBUG)");
-            System.out.println("3. Wyjdź");
-
-            System.out.print("Wybierz opcję: ");
-            int choice = Integer.parseInt(scanner.nextLine());
-
-            switch (choice) {
-                case 1 -> dodajPacjenta(scanner);
-                case 2 -> wyswietlPacjentow();
-                case 3 -> {
-                    running = false;
-                    System.out.println("Zamykanie systemu...");
-                }
-                default -> System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
-            }
-        }
-
-        scanner.close();
-    }
-
-    private static UserType wybierzTypUzytkownika(Scanner scanner) {
-        System.out.println("Witaj w systemie zarządzania przychodnią lekarską!");
-        System.out.println("Wybierz swoje konto:");
+        // Wybór typu użytkownika
+        System.out.println("Wybierz typ użytkownika:");
         System.out.println("1. Pracownik działu HR");
         System.out.println("2. Recepcjonista");
+        int wybor = scanner.nextInt();
+        scanner.nextLine(); // konsumowanie znaku nowej linii po nextInt()
 
-        int choice = -1;
+        UserType userType = (wybor == 1) ? UserType.HR : UserType.RECEPCJONISTA;
 
-        // Obsługa błędnych wejść
-        while (choice < 1 || choice > 2) {
-            System.out.print("Wpisz numer (1 lub 2): ");
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
+        // Wyświetlenie wybranego typu użytkownika
+        System.out.println("Wybrano: " + userType);
+
+        // Inicjalizacja repozytorium pacjentów
+        PacjentRepository pacjentRepository = new PacjentRepository();
+
+        // Dodanie przykładowych pacjentów (możesz to pominąć, jeśli pacjenci są już dodani w inny sposób)
+        Pacjent pacjent1 = new Pacjent("Jan", "Kowalski", "12345678901",
+                LocalDate.of(1990, 5, 15), "123-456-789", "jan.kowalski@example.com");
+        Pacjent pacjent2 = new Pacjent("Anna", "Nowak", "09876543210",
+                LocalDate.of(1985, 3, 20), "987-654-321", "anna.nowak@example.com");
+
+        pacjentRepository.dodajPacjenta(pacjent1);
+        pacjentRepository.dodajPacjenta(pacjent2);
+
+        // Menu dla recepcjonisty
+        if (userType == UserType.RECEPCJONISTA) {
+            boolean exit = false;
+            while (!exit) {
+                System.out.println("\nWybierz opcję:");
+                System.out.println("1. Dodaj nowego pacjenta");
+                System.out.println("2. Wyszukaj pacjenta po numerze PESEL");
+                System.out.println("3. Wyjście");
+                int opcja = scanner.nextInt();
+                scanner.nextLine(); // konsumowanie znaku nowej linii
+
+                switch (opcja) {
+                    case 1:
+                        // Dodawanie nowego pacjenta
+                        System.out.println("Podaj imię:");
+                        String imie = scanner.nextLine();
+                        System.out.println("Podaj nazwisko:");
+                        String nazwisko = scanner.nextLine();
+                        System.out.println("Podaj numer PESEL:");
+                        String pesel = scanner.nextLine();
+                        System.out.println("Podaj datę urodzenia (RRRR-MM-DD):");
+                        String data = scanner.nextLine();
+                        LocalDate dataUrodzenia = LocalDate.parse(data);
+                        System.out.println("Podaj numer telefonu:");
+                        String telefon = scanner.nextLine();
+                        System.out.println("Podaj adres email:");
+                        String email = scanner.nextLine();
+
+                        Pacjent nowyPacjent = new Pacjent(imie, nazwisko, pesel, dataUrodzenia, telefon, email);
+                        pacjentRepository.dodajPacjenta(nowyPacjent);
+                        System.out.println("Dodano nowego pacjenta.");
+                        break;
+                    case 2:
+                        // Wyszukiwanie pacjenta po PESEL
+                        System.out.println("Podaj numer PESEL pacjenta do wyszukania:");
+                        String szukanyPesel = scanner.nextLine();
+
+                        Pacjent znalezionyPacjent = pacjentRepository.znajdzPacjentaPoPesel(szukanyPesel);
+                        if (znalezionyPacjent != null) {
+                            System.out.println("Znaleziono pacjenta:");
+                            System.out.println(znalezionyPacjent);
+                        } else {
+                            System.out.println("Nie znaleziono pacjenta o podanym numerze PESEL.");
+                        }
+                        break;
+                    case 3:
+                        // Wyjście z programu
+                        exit = true;
+                        break;
+                    default:
+                        System.out.println("Nieprawidłowa opcja. Spróbuj ponownie.");
+                }
             }
-        }
-
-        return (choice == 1) ? UserType.HR : UserType.RECEPCJONISTA;
-    }
-
-    private static void dodajPacjenta(Scanner scanner) {
-        System.out.print("Podaj imię: ");
-        String imie = scanner.nextLine();
-
-        System.out.print("Podaj nazwisko: ");
-        String nazwisko = scanner.nextLine();
-
-        System.out.print("Podaj PESEL: ");
-        String pesel = scanner.nextLine();
-
-        System.out.print("Podaj datę urodzenia (YYYY-MM-DD): ");
-        LocalDate dataUrodzenia = LocalDate.parse(scanner.nextLine());
-
-        System.out.print("Podaj numer telefonu: ");
-        String telefon = scanner.nextLine();
-
-        System.out.print("Podaj adres e-mail: ");
-        String email = scanner.nextLine();
-
-        Pacjent pacjent = new Pacjent(imie, nazwisko, pesel, dataUrodzenia, telefon, email);
-        pacjentRepository.dodajPacjenta(pacjent);
-    }
-
-    private static void wyswietlPacjentow() {
-        if (pacjentRepository.getPacjenci().isEmpty()) {
-            System.out.println("Brak pacjentów w systemie.");
         } else {
-            pacjentRepository.getPacjenci().values().forEach(System.out::println);
+            System.out.println("Brak dostępnych opcji dla wybranego typu użytkownika.");
         }
     }
 }

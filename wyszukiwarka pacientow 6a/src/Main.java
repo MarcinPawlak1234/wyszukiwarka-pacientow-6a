@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -25,14 +26,17 @@ public class Main {
         // Inicjalizacja repozytorium pacjentów
         PacjentRepository pacjentRepository = new PacjentRepository();
 
-        // Dodanie przykładowych pacjentów (możesz to pominąć, jeśli pacjenci są już dodani w inny sposób)
+        // Dodanie przykładowych pacjentów (opcjonalnie)
         Pacjent pacjent1 = new Pacjent("Jan", "Kowalski", "12345678901",
                 LocalDate.of(1990, 5, 15), "123-456-789", "jan.kowalski@example.com");
         Pacjent pacjent2 = new Pacjent("Anna", "Nowak", "09876543210",
                 LocalDate.of(1985, 3, 20), "987-654-321", "anna.nowak@example.com");
+        Pacjent pacjent3 = new Pacjent("Piotr", "Nowak", "11223344556",
+                LocalDate.of(1988, 7, 10), "555-666-777", "piotr.nowak@example.com");
 
         pacjentRepository.dodajPacjenta(pacjent1);
         pacjentRepository.dodajPacjenta(pacjent2);
+        pacjentRepository.dodajPacjenta(pacjent3);
 
         // Menu dla recepcjonisty
         if (userType == UserType.RECEPCJONISTA) {
@@ -41,7 +45,8 @@ public class Main {
                 System.out.println("\nWybierz opcję:");
                 System.out.println("1. Dodaj nowego pacjenta");
                 System.out.println("2. Wyszukaj pacjenta po numerze PESEL");
-                System.out.println("3. Wyjście");
+                System.out.println("3. Wyszukaj pacjentów po nazwisku");
+                System.out.println("4. Wyjście");
                 int opcja = scanner.nextInt();
                 scanner.nextLine(); // konsumowanie znaku nowej linii
 
@@ -80,6 +85,21 @@ public class Main {
                         }
                         break;
                     case 3:
+                        // Wyszukiwanie pacjentów po nazwisku
+                        System.out.println("Podaj nazwisko pacjentów do wyszukania:");
+                        String szukaneNazwisko = scanner.nextLine();
+
+                        List<Pacjent> znalezieniPacjenci = pacjentRepository.znajdzPacjentowPoNazwisku(szukaneNazwisko);
+                        if (!znalezieniPacjenci.isEmpty()) {
+                            System.out.println("Znaleziono pacjentów:");
+                            for (Pacjent pacjent : znalezieniPacjenci) {
+                                System.out.println(pacjent);
+                            }
+                        } else {
+                            System.out.println("Nie znaleziono pacjentów o podanym nazwisku.");
+                        }
+                        break;
+                    case 4:
                         // Wyjście z programu
                         exit = true;
                         break;

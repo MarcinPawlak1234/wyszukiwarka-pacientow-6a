@@ -1,9 +1,11 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Klasa przechowująca pacjentów w systemie.
- * Umożliwia dodawanie pacjentów i wyszukiwanie ich po numerze PESEL.
+ * Umożliwia dodawanie pacjentów i wyszukiwanie ich po numerze PESEL i nazwisku.
  */
 public class PacjentRepository {
 
@@ -26,6 +28,22 @@ public class PacjentRepository {
      */
     public Pacjent znajdzPacjentaPoPesel(String pesel) {
         return pacjenci.get(pesel);
+    }
+
+    /**
+     * Wyszukuje pacjentów po nazwisku.
+     *
+     * @param nazwisko Nazwisko pacjenta.
+     * @return Lista pacjentów o podanym nazwisku.
+     */
+    public List<Pacjent> znajdzPacjentowPoNazwisku(String nazwisko) {
+        List<Pacjent> znalezieniPacjenci = new ArrayList<>();
+        for (Pacjent pacjent : pacjenci.values()) {
+            if (pacjent.getNazwisko().equalsIgnoreCase(nazwisko)) {
+                znalezieniPacjenci.add(pacjent);
+            }
+        }
+        return znalezieniPacjenci;
     }
 
     /**
